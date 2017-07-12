@@ -7,10 +7,14 @@
   <body>
     <div class="container">
       <div class="options-box">
-        <h1>Neighborhood Map for Date Ideas</h1>
+        <h1>Experience Sydney</h1><br>
+        <h2>Activities to do in Sydney<h2>
         <div>
           <input id="show-listings" type="button" value="Show Listings">
           <input id="hide-listings" type="button" value="Hide Listings">
+        </div>
+        <div data-bind="foreach: places">
+          <p data-bind="text: title"></p>
         </div>
       </div>
       <div id="map"></div>
