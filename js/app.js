@@ -1,11 +1,11 @@
 /* ======= Model ======= */
 var locations = [
-  {title: 'Park Ave Penthouse', coordinates: {lat: 40.7713024, lng: -73.9632393}},
-  {title: 'Chelsea Loft', coordinates: {lat: 40.7444883, lng: -73.9949465}},
-  {title: 'Union Square Open Floor Plan', coordinates: {lat: 40.7347062, lng: -73.9895759}},
-  {title: 'East Village Hip Studio', coordinates: {lat: 40.7281777, lng: -73.984377}},
-  {title: 'TriBeCa Artsy Bachelor Pad', coordinates: {lat: 40.7195264, lng: -74.0089934}},
-  {title: 'Chinatown Homey Space', coordinates: {lat: 40.7180628, lng: -73.9961237}}
+  {title: 'Park Ave Penthouse', coordinates: {lat: 40.7713024, lng: -73.9632393}, type: "Action"},
+  {title: 'Chelsea Loft', coordinates: {lat: 40.7444883, lng: -73.9949465}, type: "Food"},
+  {title: 'Union Square Open Floor Plan', coordinates: {lat: 40.7347062, lng: -73.9895759}, type: "Action"},
+  {title: 'East Village Hip Studio', coordinates: {lat: 40.7281777, lng: -73.984377}, type: "Rest"},
+  {title: 'TriBeCa Artsy Bachelor Pad', coordinates: {lat: 40.7195264, lng: -74.0089934}, type: "Action"},
+  {title: 'Chinatown Homey Space', coordinates: {lat: 40.7180628, lng: -73.9961237}, type: "Rest"}
 ];
 
 
@@ -14,10 +14,15 @@ var map;
 // Create a new blank array for all the listing markers.
 var markers = [];
 
-function place(title, position) {
+function place(title, position, type) {
     var self = this;
     self.title = title;
+    self.type = type;
     self.position = position;
+
+
+    //To do add fucntion for the filter
+
     // self.marker = new google.maps.Marker({
     //   position: position,
     //   title: title,
@@ -31,14 +36,20 @@ var places = ko.observableArray();
 for (var i = 0; i < locations.length; i++) {
   var position = locations[i].coordinates;
   var title = locations[i].title;
-  places.push(new place(title, position));
+  var type = locations[i].type;
+  places.push(new place(title, position, type));
 }
 
 
 /* ======= View ======= */
 function MapViewModel() {
     var self = this;
+    self.filter = ko.observable("All");
+    self.Activities = ["All", "Action", "Food", "Rest", "Social", "Events"];
     self.places = places;
+    // self.markerBounce = function() {
+    //   markers[0].setAnimation(google.maps.Animation.BOUNCE);
+    // }
 
 }
 
@@ -76,8 +87,9 @@ function initMap() {
       populateInfoWindow(this, largeInfowindow);
     });
   }
-  document.getElementById('show-listings').addEventListener('click', showListings);
-  document.getElementById('hide-listings').addEventListener('click', hideListings);
+  showplaces();
+  document.getElementById('show-places').addEventListener('click', showplaces);
+  document.getElementById('hide-places').addEventListener('click', hideplaces);
 }
 
 // This function populates the infowindow when the marker is clicked. We'll only allow
@@ -97,7 +109,7 @@ function populateInfoWindow(marker, infowindow) {
 }
 
 // This function will loop through the markers array and display them all.
-function showListings() {
+function showplaces() {
   var bounds = new google.maps.LatLngBounds();
   // Extend the boundaries of the map for each marker and display the marker
   for (var i = 0; i < markers.length; i++) {
@@ -107,8 +119,14 @@ function showListings() {
   map.fitBounds(bounds);
 }
 
+// This function will loop through the markers array and display them all.
+function bounceMarker(marker) {
+  marker.setAnimation(google.maps.Animation.BOUNCE);
+}
+
+
 // This function will loop through the listings and hide them all.
-function hideListings() {
+function hideplaces() {
   for (var i = 0; i < markers.length; i++) {
     markers[i].setMap(null);
   }

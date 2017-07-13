@@ -9,12 +9,13 @@
       <div class="options-box">
         <h1>Experience Sydney</h1><br>
         <h2>Activities to do in Sydney<h2>
-        <div>
-          <input id="show-listings" type="button" value="Show Listings">
-          <input id="hide-listings" type="button" value="Hide Listings">
+        <div>Filter
+          <select data-bind="options: $root.Activities, value: filter"></select>
         </div>
         <div data-bind="foreach: places">
-          <p data-bind="text: title"></p>
+        <div data-bind="if: $root.filter()==type || $root.filter()=='All'">
+          <a href="#" data-bind="text: title"></a><br>
+        </div>
         </div>
       </div>
       <div id="map"></div>
