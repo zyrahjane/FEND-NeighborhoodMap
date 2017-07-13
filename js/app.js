@@ -1,10 +1,4 @@
-var map;
-// Create a new blank array for all the listing markers.
-var markers = [];
-
 /* ======= Model ======= */
-    // These are the real estate listings that will be shown to the user.
-    // Normally we'd have these in a database instead.
 var locations = [
   {title: 'Park Ave Penthouse', coordinates: {lat: 40.7713024, lng: -73.9632393}},
   {title: 'Chelsea Loft', coordinates: {lat: 40.7444883, lng: -73.9949465}},
@@ -15,11 +9,35 @@ var locations = [
 ];
 
 
-var places = ko.observableArray(locations);
+/* ======= ModelView ======= */
+var map;
+// Create a new blank array for all the listing markers.
+var markers = [];
 
+function place(title, position) {
+    var self = this;
+    self.title = title;
+    self.position = position;
+    // self.marker = new google.maps.Marker({
+    //   position: position,
+    //   title: title,
+    //   animation: google.maps.Animation.DROP,
+    //   id: 1
+    // });
+};
+
+var places = ko.observableArray();
+
+for (var i = 0; i < locations.length; i++) {
+  var position = locations[i].coordinates;
+  var title = locations[i].title;
+  places.push(new place(title, position));
+}
+
+
+/* ======= View ======= */
 function MapViewModel() {
     var self = this;
-    // Editable data
     self.places = places;
 
 }
@@ -62,36 +80,36 @@ function initMap() {
   document.getElementById('hide-listings').addEventListener('click', hideListings);
 }
 
-  // This function populates the infowindow when the marker is clicked. We'll only allow
-  // one infowindow which will open at the marker that is clicked, and populate based
-  // on that markers position.
-  function populateInfoWindow(marker, infowindow) {
-    // Check to make sure the infowindow is not already opened on this marker.
-    if (infowindow.marker != marker) {
-      infowindow.marker = marker;
-      infowindow.setContent('<div>' + marker.title + '</div>');
-      infowindow.open(map, marker);
-      // Make sure the marker property is cleared if the infowindow is closed.
-      infowindow.addListener('closeclick', function() {
-        infowindow.marker = null;
-      });
-    }
+// This function populates the infowindow when the marker is clicked. We'll only allow
+// one infowindow which will open at the marker that is clicked, and populate based
+// on that markers position.
+function populateInfoWindow(marker, infowindow) {
+  // Check to make sure the infowindow is not already opened on this marker.
+  if (infowindow.marker != marker) {
+    infowindow.marker = marker;
+    infowindow.setContent('<div>' + marker.title + '</div>');
+    infowindow.open(map, marker);
+    // Make sure the marker property is cleared if the infowindow is closed.
+    infowindow.addListener('closeclick', function() {
+      infowindow.marker = null;
+    });
   }
+}
 
-  // This function will loop through the markers array and display them all.
-  function showListings() {
-    var bounds = new google.maps.LatLngBounds();
-    // Extend the boundaries of the map for each marker and display the marker
-    for (var i = 0; i < markers.length; i++) {
-      markers[i].setMap(map);
-      bounds.extend(markers[i].position);
-    }
-    map.fitBounds(bounds);
+// This function will loop through the markers array and display them all.
+function showListings() {
+  var bounds = new google.maps.LatLngBounds();
+  // Extend the boundaries of the map for each marker and display the marker
+  for (var i = 0; i < markers.length; i++) {
+    markers[i].setMap(map);
+    bounds.extend(markers[i].position);
   }
+  map.fitBounds(bounds);
+}
 
-  // This function will loop through the listings and hide them all.
-  function hideListings() {
-    for (var i = 0; i < markers.length; i++) {
-      markers[i].setMap(null);
-    }
+// This function will loop through the listings and hide them all.
+function hideListings() {
+  for (var i = 0; i < markers.length; i++) {
+    markers[i].setMap(null);
   }
+}
