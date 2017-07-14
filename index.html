@@ -7,10 +7,15 @@
   <body>
     <div class="container">
       <div class="options-box">
-        <h1>Neighborhood Map for Date Ideas</h1>
-        <div>
-          <input id="show-listings" type="button" value="Show Listings">
-          <input id="hide-listings" type="button" value="Hide Listings">
+        <h1>Experience Sydney</h1><br>
+        <h2>Activities to do in Sydney<h2>
+        <div>Filter
+          <select data-bind="options: $root.Activities, value: filter"></select>
+        </div>
+        <div data-bind="foreach: places">
+        <div data-bind="if: $root.filter()==type || $root.filter()=='All'">
+          <a href="#" data-bind="text: title"></a><br>
+        </div>
         </div>
       </div>
       <div id="map"></div>

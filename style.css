@@ -22,6 +22,13 @@ h1 {
     text-align: center;
 }
 
+h2 {
+    color: #525454;
+    font-size: 15px;
+    margin: 0 0 10px 0;
+    text-align: center;
+}
+
 #hide-listings,
 #show-listings {
     width: 48%;
