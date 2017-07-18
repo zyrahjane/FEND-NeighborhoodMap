@@ -14,7 +14,7 @@
         </div>
         <div data-bind="foreach: places">
         <div data-bind="if: $root.filter()==type || $root.filter()=='All'">
-          <a href="#" data-bind="text: title"></a><br>
+          <a data-bind="text: title, click: $root.bouncePlace"></a><br>
         </div>
         </div>
       </div>

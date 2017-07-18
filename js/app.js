@@ -11,7 +11,6 @@ var locations = [
 
 /* ======= ModelView ======= */
 var map;
-// Create a new blank array for all the listing markers.
 var markers = [];
 
 function place(title, position, type) {
@@ -19,16 +18,6 @@ function place(title, position, type) {
     self.title = title;
     self.type = type;
     self.position = position;
-
-
-    //To do add fucntion for the filter
-
-    // self.marker = new google.maps.Marker({
-    //   position: position,
-    //   title: title,
-    //   animation: google.maps.Animation.DROP,
-    //   id: 1
-    // });
 };
 
 var places = ko.observableArray();
@@ -47,13 +36,16 @@ function MapViewModel() {
     self.filter = ko.observable("All");
     self.Activities = ["All", "Action", "Food", "Rest", "Social", "Events"];
     self.places = places;
-    // self.markerBounce = function() {
-    //   markers[0].setAnimation(google.maps.Animation.BOUNCE);
-    // }
+    self.bouncePlace = function(place) {
+       place.marker.setAnimation(4);
+       populateInfoWindow(place.marker, self.infoWindow);
+       self.map.panTo(place.marker.getPosition());
+   }
 
 }
 
-ko.applyBindings(new MapViewModel());
+var mapViewModel = new MapViewModel()
+ko.applyBindings(mapViewModel);
 
 function initMap() {
   // Constructor creates a new map - only center and zoom are required.
@@ -67,6 +59,8 @@ function initMap() {
   // Normally we'd have these in a database instead.
 
   var largeInfowindow = new google.maps.InfoWindow();
+  mapViewModel.map = map
+  mapViewModel.infoWindow = largeInfowindow;
 
   // The following group uses the location array to create an array of markers on initialize.
   for (var i = 0; i < locations.length; i++) {
@@ -74,7 +68,7 @@ function initMap() {
     var position = locations[i].coordinates;
     var title = locations[i].title;
     // Create a marker per location, and put into markers array.
-     var marker = new google.maps.Marker({
+    var marker = new google.maps.Marker({
       position: position,
       title: title,
       animation: google.maps.Animation.DROP,
@@ -82,14 +76,13 @@ function initMap() {
     });
     // Push the marker to our array of markers.
     markers.push(marker);
+    mapViewModel.places()[i].marker = marker;
     // Create an onclick event to open an infowindow at each marker.
     marker.addListener('click', function() {
       populateInfoWindow(this, largeInfowindow);
     });
   }
   showplaces();
-  document.getElementById('show-places').addEventListener('click', showplaces);
-  document.getElementById('hide-places').addEventListener('click', hideplaces);
 }
 
 // This function populates the infowindow when the marker is clicked. We'll only allow
