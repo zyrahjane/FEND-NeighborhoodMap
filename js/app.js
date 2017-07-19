@@ -1,13 +1,12 @@
 /* ======= Model ======= */
 var locations = [
-  {title: 'Park Ave Penthouse', coordinates: {lat: 40.7713024, lng: -73.9632393}, type: "Action"},
-  {title: 'Chelsea Loft', coordinates: {lat: 40.7444883, lng: -73.9949465}, type: "Food"},
-  {title: 'Union Square Open Floor Plan', coordinates: {lat: 40.7347062, lng: -73.9895759}, type: "Action"},
-  {title: 'East Village Hip Studio', coordinates: {lat: 40.7281777, lng: -73.984377}, type: "Rest"},
-  {title: 'TriBeCa Artsy Bachelor Pad', coordinates: {lat: 40.7195264, lng: -74.0089934}, type: "Action"},
-  {title: 'Chinatown Homey Space', coordinates: {lat: 40.7180628, lng: -73.9961237}, type: "Rest"}
+  {title: 'Newtown Hotel', coordinates: {lat: -33.894295, lng: 151.182851}, type: "Social"},
+  {title: 'Bondi Beach', coordinates: {lat: -33.891071, lng: 151.276666}, type: "Rest"},
+  {title: 'Ippudo', coordinates: {lat: -33.869757, lng: 151.208893}, type: "Food"},
+  {title: 'Opera house', coordinates: {lat: -33.856775, lng: 151.215307}, type: "Events"},
+  {title: 'BridgeClimb Sydney', coordinates: {lat: -33.857491, lng: 151.207839}, type: "Action"},
+  {title: 'The Lobo Plantation', coordinates: {lat: -33.869964, lng: 151.205168}, type: "Social"}
 ];
-
 
 /* ======= ModelView ======= */
 var map;
@@ -41,7 +40,9 @@ function MapViewModel() {
        populateInfoWindow(place.marker, self.infoWindow);
        self.map.panTo(place.marker.getPosition());
    }
-
+    self.moreInfo = function(place) {
+       // get info from foursquare
+   }
 }
 
 var mapViewModel = new MapViewModel()
@@ -50,7 +51,7 @@ ko.applyBindings(mapViewModel);
 function initMap() {
   // Constructor creates a new map - only center and zoom are required.
   map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: 40.7413549, lng: -73.9980244},
+    center: {lat: -33.882600, lng: 151.204825},
     zoom: 13,
     mapTypeControl: false
   });
@@ -92,13 +93,27 @@ function populateInfoWindow(marker, infowindow) {
   // Check to make sure the infowindow is not already opened on this marker.
   if (infowindow.marker != marker) {
     infowindow.marker = marker;
-    infowindow.setContent('<div>' + marker.title + '</div>');
+    infowindow.setContent('<div>' + marker.title + '</div>' +
+        '<div><input type=\"button\" value=\"More Info\" onclick =' +
+        '\"displayInfo(&quot;'+'&quot;);\"></input></div>'
+      );
     infowindow.open(map, marker);
     // Make sure the marker property is cleared if the infowindow is closed.
     infowindow.addListener('closeclick', function() {
       infowindow.marker = null;
     });
   }
+}
+
+// Display info from four
+function displayInfo(place) {
+  var ll_str = str(place.position.lat) + ',' + str(place.position.lng);
+  var id_str = "K4YEDORKJIH5FLLSADFTLBO5V43S0WJ1M3KGCGOL01QQPRTG";
+  var secret_str = "FGFSEHNPR340ONMRYJFV04MF01VCAD5G1CEDVILQKEVP42D5";
+  var version = "20170701";
+  // var fourSquURL = https:"https://api.foursquare.com/v2/venues/search?ll=" +
+  //   ll_str + "&limit=1&client_id=" + id_str + " &client_secret=" + secret_str +
+  //   "&v=" + version;
 }
 
 // This function will loop through the markers array and display them all.
