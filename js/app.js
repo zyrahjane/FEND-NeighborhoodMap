@@ -40,6 +40,15 @@ function MapViewModel() {
        populateInfoWindow(place.marker, self.infoWindow);
        self.map.panTo(place.marker.getPosition());
    }
+    self.filterMap = function (places) {
+      for (var i = 0; i < places.length; i++) {
+        // only have markes in filter
+        // if places[i].type == "All" {
+
+        // }
+        // markers[i].setMap(null);
+      }
+}
     self.moreInfo = function(place) {
        // get info from foursquare
    }
@@ -106,14 +115,32 @@ function populateInfoWindow(marker, infowindow) {
 }
 
 // Display info from four
-function displayInfo(place) {
+function getInfo(place) {
   var ll_str = str(place.position.lat) + ',' + str(place.position.lng);
   var id_str = "K4YEDORKJIH5FLLSADFTLBO5V43S0WJ1M3KGCGOL01QQPRTG";
   var secret_str = "FGFSEHNPR340ONMRYJFV04MF01VCAD5G1CEDVILQKEVP42D5";
-  var version = "20170701";
-  // var fourSquURL = https:"https://api.foursquare.com/v2/venues/search?ll=" +
-  //   ll_str + "&limit=1&client_id=" + id_str + " &client_secret=" + secret_str +
-  //   "&v=" + version;
+  var data;
+  $.ajax({
+      url: 'https://api.foursquare.com/v2/venues/search',
+      dataType: 'json',
+      data: 'client_id='+id_str+'&client_secret='+secret_str+'&limit=1&v=20170701%20&ll='+ll_str,
+      async: true,
+  }).done(function (response) {
+      data = response.response.venues;
+      // data.forEach(function (cafe) {
+      //     foursquare = new Foursquare(cafe, map);
+      //     self.cafeList.push(foursquare);
+      // });
+      // self.cafeList().forEach(function (cafe) {
+      //     if (cafe.map_location()) {
+      //         google.maps.event.addListener(cafe.marker, 'click', function () {
+      //             self.selectCafe(cafe);
+      //         });
+      //     }
+      // });
+  }).fail(function (response, status, error) {
+      // $('#query-summary').text('Cafe\'s could not load...');
+  });
 }
 
 // This function will loop through the markers array and display them all.
