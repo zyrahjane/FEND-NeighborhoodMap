@@ -15,19 +15,15 @@ var mapViewModel = new MapViewModel();
 ko.applyBindings(mapViewModel);
 
 // place constructor
-function place(title, position, type) {
+function place(title, position, type, marker, largeInfowindow) {
     var self = this;
     self.title = title;
     self.type = type;
-    self.position = position
-};
-
-// create places and pusth to array
-for (var i = 0; i < locations.length; i++) {
-  var position = locations[i].coordinates;
-  var title = locations[i].title;
-  var type = locations[i].type;
-  places.push(new place(title, position, type));
+    self.position = position;
+    self.marker = marker;
+    self.marker.addListener('click', function() {
+      populateInfoWindow(this, largeInfowindow);
+    });
 }
 
 // initialising places
@@ -58,32 +54,26 @@ function initMap() {
     mapTypeControl: false
   });
 
-
   var largeInfowindow = new google.maps.InfoWindow();
   mapViewModel.map = map;
   mapViewModel.infoWindow = largeInfowindow;
 
-  // The following group uses the location array to create an array of markers on initialize.
+// create places and pusth to array
   for (var i = 0; i < locations.length; i++) {
-    // Get the position from the location array.
     var position = locations[i].coordinates;
     var title = locations[i].title;
-    // Create a marker per location, and put into markers array.
+    var type = locations[i].type;
     var marker = new google.maps.Marker({
       position: position,
       title: title,
       animation: google.maps.Animation.DROP,
       id: i
     });
-    // Push the marker to our array of markers.
-    mapViewModel.places()[i].marker = marker;
-    // Create an onclick event to open an infowindow at each marker.
-    marker.addListener('click', function() {
-      populateInfoWindow(this, largeInfowindow);
-    });
+    places.push(new place(title, position, type, marker, largeInfowindow));
   }
   showplaces(mapViewModel.places, "All");
 }
+
 
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
