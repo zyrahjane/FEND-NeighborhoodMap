@@ -11,7 +11,7 @@ var locations = [
 /* ======= ModelView ======= */
 var map;
 var places = ko.observableArray();
-var mapViewModel = new MapViewModel()
+var mapViewModel = new MapViewModel();
 ko.applyBindings(mapViewModel);
 
 // place constructor
@@ -19,7 +19,7 @@ function place(title, position, type) {
     var self = this;
     self.title = title;
     self.type = type;
-    self.position = position;
+    self.position = position
 };
 
 // create places and pusth to array
@@ -60,7 +60,7 @@ function initMap() {
 
 
   var largeInfowindow = new google.maps.InfoWindow();
-  mapViewModel.map = map
+  mapViewModel.map = map;
   mapViewModel.infoWindow = largeInfowindow;
 
   // The following group uses the location array to create an array of markers on initialize.
@@ -134,7 +134,7 @@ function showplaces(places, type) {
   var bounds = new google.maps.LatLngBounds();
   // Extend the boundaries of the map for each marker and display the marker
   for (var i = 0; i < places().length; i++) {
-    p = places()[i]
+    p = places()[i];
     if (p.type == type || type == 'All'){
       p.marker.setMap(map);
     }
