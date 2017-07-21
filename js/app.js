@@ -10,8 +10,11 @@ var locations = [
 
 /* ======= ModelView ======= */
 var map;
-var markers = [];
+var places = ko.observableArray();
+var mapViewModel = new MapViewModel()
+ko.applyBindings(mapViewModel);
 
+// place constructor
 function place(title, position, type) {
     var self = this;
     self.title = title;
@@ -19,8 +22,7 @@ function place(title, position, type) {
     self.position = position;
 };
 
-var places = ko.observableArray();
-
+// create places and pusth to array
 for (var i = 0; i < locations.length; i++) {
   var position = locations[i].coordinates;
   var title = locations[i].title;
@@ -28,8 +30,7 @@ for (var i = 0; i < locations.length; i++) {
   places.push(new place(title, position, type));
 }
 
-
-/* ======= View ======= */
+// initialising places
 function MapViewModel() {
     var self = this;
     self.filter = ko.observable("All");
@@ -39,17 +40,16 @@ function MapViewModel() {
        place.marker.setAnimation(4);
        populateInfoWindow(place.marker, self.infoWindow);
        self.map.panTo(place.marker.getPosition());
-   }
-    self.filterMarkers = ko.computed(function() {
-      console.log(self.filter());
-      hideplaces();
-
+   };
+   // will run function if filter value changes exculding the initialising
+    self.filter.subscribe (function() {
+      // console.log(self.filter())
+      hideplaces(self.places);
+      showplaces(self.places, self.filter());
     });
 }
 
-var mapViewModel = new MapViewModel()
-ko.applyBindings(mapViewModel);
-
+// initialising map
 function initMap() {
   // Constructor creates a new map - only center and zoom are required.
   map = new google.maps.Map(document.getElementById('map'), {
@@ -58,8 +58,6 @@ function initMap() {
     mapTypeControl: false
   });
 
-  // These are the real estate listings that will be shown to the user.
-  // Normally we'd have these in a database instead.
 
   var largeInfowindow = new google.maps.InfoWindow();
   mapViewModel.map = map
@@ -78,7 +76,6 @@ function initMap() {
       id: i
     });
     // Push the marker to our array of markers.
-    markers.push(marker);
     mapViewModel.places()[i].marker = marker;
     // Create an onclick event to open an infowindow at each marker.
     marker.addListener('click', function() {
@@ -113,10 +110,10 @@ function populateInfoWindow(marker, infowindow) {
     }).done(function (response) {
         fsquResponse = response.response.venues[0];
         // console.log(fsquResponse)
-        infowindow.setContent('<div>' + marker.title + '</div>' +
-        '<div>' + (fsquResponse.location.address===undefined?'':fsquResponse.location.address) + '</div>' +
-        '<div>' + (fsquResponse.contact.phone===undefined?'':fsquResponse.contact.phone) + '</div>' +
-        '<div>' + (fsquResponse.url===undefined?'':fsquResponse.url) + '</div>'
+        infowindow.setContent('<h3>' + marker.title + '</h3>' +
+        '<ul>' + (fsquResponse.location.address===undefined?'':fsquResponse.location.address) + '</ul>' +
+        '<ul>' + (fsquResponse.contact.phone===undefined?'':fsquResponse.contact.phone) + '</ul>' +
+        '<a href="' + fsquResponse.url + '">' + (fsquResponse.url===undefined?'':fsquResponse.url) + '</a>'
         );
     }).fail(function (response, status, error) {
         infowindow.setContent('<div>' + 'Unable to find information' + '</div>'
@@ -147,8 +144,8 @@ function showplaces(places, type) {
 }
 
 // This function will loop through the listings and hide them all.
-function hideplaces() {
-  for (var i = 0; i < markers.length; i++) {
-    markers[i].setMap(null);
+function hideplaces(places) {
+  for (var i = 0; i < places().length; i++) {
+    places()[i].marker.setMap(null);
   }
 }

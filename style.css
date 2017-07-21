@@ -1,6 +1,6 @@
 html,
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Lato', sans-serif;
     height: 100%;
     margin: 0;
     padding: 0;
@@ -8,47 +8,83 @@ body {
 
 .container {
     height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
     position: relative;
-}
-
-input {
-    font-size: 12px;
 }
 
 h1 {
     color: #525454;
-    font-size: 22px;
-    margin: 0 0 10px 0;
+    font-size: 30px;
     text-align: center;
 }
-
 h2 {
     color: #525454;
     font-size: 15px;
     margin: 0 0 10px 0;
     text-align: center;
 }
+h3 {
+    color: #525454;
+    font-size: 15px;
+    text-align: center;
+}
 
-#hide-listings,
-#show-listings {
-    width: 48%;
+#filter-button {
+    width: 30%;
+    display: inline-block;
+    margin: 0 0 20px 0;
 }
 
 #map {
-    bottom:0px;
+    bottom: 0px;
     height: 100%;
-    left: 362px;
+    width: 70%;
     position: absolute;
     right: 0px;
 }
 
 .options-box {
-    background: #fff;
+    background: white;
     border: 1px solid #999;
     border-radius: 3px;
     height: 100%;
     line-height: 35px;
     padding: 10px 10px 30px 10px;
     text-align: left;
-    width: 340px;
+    width: 30%;
+    overflow-y: auto;
+}
+
+@media only screen and (max-width: 750px) {
+    .container {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        position: relative;
+    }
+
+    #map {
+        height: 70%;
+        width: 100%;
+        position: absolute;
+        left: 0px;
+        bottom: 0px;
+    }
+
+    .options-box {
+        background: #fff;
+        border: 1px solid #999;
+        border-radius: 3px;
+        line-height: 35px;
+        padding: 10px 10px 50px 10px;
+        height: 30%;
+        width: 100%;
+        top: 0;
+        overflow-y: auto;
+        left: 0;
+    }
+
 }
