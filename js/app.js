@@ -14,8 +14,8 @@ var places = ko.observableArray();
 var mapViewModel = new MapViewModel();
 ko.applyBindings(mapViewModel);
 
-// place constructor
-function place(title, position, type, marker, largeInfowindow) {
+// Class
+function Place(title, position, type, marker, largeInfowindow) {
     var self = this;
     self.title = title;
     self.type = type;
@@ -23,6 +23,7 @@ function place(title, position, type, marker, largeInfowindow) {
     self.marker = marker;
     self.marker.addListener('click', function() {
       populateInfoWindow(this, largeInfowindow);
+      this.setAnimation(4);
     });
 }
 
@@ -40,8 +41,7 @@ function MapViewModel() {
    // will run function if filter value changes exculding the initialising
     self.filter.subscribe (function() {
       // console.log(self.filter())
-      hideplaces(self.places);
-      showplaces(self.places, self.filter());
+      filterPlaces(self.places, self.filter());
     });
 }
 
@@ -69,9 +69,9 @@ function initMap() {
       animation: google.maps.Animation.DROP,
       id: i
     });
-    places.push(new place(title, position, type, marker, largeInfowindow));
+    places.push(new Place(title, position, type, marker, largeInfowindow));
   }
-  showplaces(mapViewModel.places, "All");
+  showPlaces(mapViewModel.places);
 }
 
 
@@ -80,6 +80,7 @@ function initMap() {
 // on that markers position.
 function populateInfoWindow(marker, infowindow) {
   // Check to make sure the infowindow is not already opened on this marker.
+  infowindow.setContent('');
   if (infowindow.marker != marker) {
     infowindow.marker = marker;
     var ll_str = marker.position.lat() + ',' + marker.position.lng();
@@ -120,22 +121,32 @@ function populateInfoWindow(marker, infowindow) {
 
 
 // This function will loop through the markers array and display them all.
-function showplaces(places, type) {
+function showPlaces(places) {
+  var bounds = new google.maps.LatLngBounds();
+  // Extend the boundaries of the map for each marker and display the marker
+  for (var i = 0; i < places().length; i++) {
+    p = places()[i];
+    p.marker.setMap(map);
+    bounds.extend(p.marker.position);
+  }
+  map.fitBounds(bounds);
+}
+
+function filterPlaces(places, type) {
   var bounds = new google.maps.LatLngBounds();
   // Extend the boundaries of the map for each marker and display the marker
   for (var i = 0; i < places().length; i++) {
     p = places()[i];
     if (p.type == type || type == 'All'){
-      p.marker.setMap(map);
+      p.marker.setVisible(true);
+    } else {
+      p.marker.setVisible(false);
     }
     bounds.extend(p.marker.position);
   }
   map.fitBounds(bounds);
 }
 
-// This function will loop through the listings and hide them all.
-function hideplaces(places) {
-  for (var i = 0; i < places().length; i++) {
-    places()[i].marker.setMap(null);
-  }
+function googleError() {
+    $('#map').text("Google map error");
 }
